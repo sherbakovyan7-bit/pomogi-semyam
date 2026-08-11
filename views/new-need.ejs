@@ -1,0 +1,59 @@
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <h2 class="mb-1">Подать нужду</h2>
+    <p class="text-muted">Опишите, чем семья нуждается. Благотворители увидят вашу заявку и напишут вам лично или переведут деньги на карту.</p>
+
+    <% if (error) { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+
+    <form action="/need/new" method="post">
+      <div class="mb-3">
+        <label class="form-label">Название *</label>
+        <input type="text" name="title" class="form-control form-control-lg" required maxlength="120" placeholder="Например: Нужна детская коляска" value="<%= values.title || '' %>">
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Категория</label>
+          <select name="category" class="form-select">
+            <option>Детские вещи</option>
+            <option>Одежда</option>
+            <option>Продукты</option>
+            <option>Медицина</option>
+            <option>Лекарства</option>
+            <option>Оплата обучения</option>
+            <option>Транспорт</option>
+            <option>Другое</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Срочность</label>
+          <select name="urgency" class="form-select">
+            <option value="critical">Критично</option>
+            <option value="high" <%= values.urgency === 'high' ? 'selected' : '' %>>Высокая</option>
+            <option value="medium">Средняя</option>
+            <option value="low">Не срочно</option>
+          </select>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Описание *</label>
+        <textarea name="description" class="form-control" rows="6" required maxlength="3000" placeholder="Расскажите подробнее: что нужно, размеры, сроки…"><%= values.description || '' %></textarea>
+      </div>
+
+      <div class="alert alert-primary border">
+        <strong>💰 Реквизиты для перевода денег</strong>
+        <div class="text-muted small mt-1">Номер карты увидят благотворители, чтобы помочь вам деньгами.</div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Номер карты (для перевода) *</label>
+        <input type="text" name="cardNumber" class="form-control" required maxlength="19" inputmode="numeric" placeholder="0000 0000 0000 0000" value="<%= values.cardNumber || '' %>">
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary btn-lg">Опубликовать нужду</button>
+        <a href="/" class="btn btn-outline-secondary btn-lg">Отмена</a>
+      </div>
+    </form>
+  </div>
+</div>

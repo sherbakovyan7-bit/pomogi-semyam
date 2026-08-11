@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "ПомогиСемьям",
+    "slug": "pomogi-semiam",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F8F9FB",
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Приложение использует фото, чтобы вы могли отправлять их в личных сообщениях."
+      }
+    },
+    "android": {
+      "usesCleartextTraffic": true,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "adaptiveIcon": {
+        "backgroundColor": "#E85D75",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "package": "com.anonymous.pomogisemiam"
+    },
+    "extra": {
+      "apiUrl": "http://192.168.0.16:3000"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Приложение использует фото, чтобы вы могли отправлять их в личных сообщениях."
+        }
+      ]
+    ]
+  }
+}

@@ -1,0 +1,83 @@
+<%
+const urgencyBadge = { critical: 'bg-danger', high: 'bg-warning', medium: 'bg-primary', low: 'bg-secondary' };
+%>
+<% if (justCreated) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    Спасибо! Ваша нужда опубликована. Благотворители смогут написать вам в личные сообщения.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+<% } %>
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
+      <h2 class="mb-0"><%= need.title %></h2>
+      <span class="badge <%= urgencyBadge[need.urgency] %> fs-6"><%= URGENCY[need.urgency] %></span>
+    </div>
+    <span class="badge bg-light text-dark border me-2"><%= need.category %></span>
+    <span class="badge bg-light text-dark border"><%= need.status === 'open' ? 'Открыта для помощи' : 'Закрыта' %></span>
+    <hr>
+    <p class="lead"><%= need.description %></p>
+    <div class="text-muted small">
+      Опубликовано <%= formatDate(need.createdAt) %>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h6 class="card-title"><%= author ? author.username : 'Семья' %></h6>
+        <% if (author) { %>
+          <% if (author.role === 'family') { %>
+            <p class="text-muted small mb-1">👨‍👩‍👧‍👦 Детей в семье: <%= author.childrenCount %></p>
+          <% } %>
+          <% if (author.about) { %><p class="text-muted small mb-0"><%= author.about %></p><% } %>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="card mb-3 border-success">
+      <div class="card-body">
+        <h6 class="card-title text-success">💰 Перевод денег</h6>
+        <table class="table table-sm table-borderless small mb-1">
+          <tr><td class="text-muted p-1">Получатель</td><td class="p-1 fw-semibold"><%= '@' + author.username %></td></tr>
+          <tr><td class="text-muted p-1">Карта</td><td class="p-1 fw-semibold"><%= formatCard(need.cardNumber) %></td></tr>
+        </table>
+        <div class="alert alert-warning py-2 px-3 small mb-0">
+          Никогда не сообщайте коды из SMS и CVV. Деньги переводите только по номеру карты, указанному здесь.
+        </div>
+      </div>
+    </div>
+
+    <% if (user && user.role === 'benefactor') { %>
+      <% if (need.userId === user.id) { %>
+        <div class="alert alert-light border">Это ваша нужда.</div>
+      <% } else if (myConversation) { %>
+        <a href="/chat/<%= myConversation.id %>" class="btn btn-success btn-lg w-100 mb-2">💬 Открыть переписку</a>
+        <p class="text-muted small text-center mb-0">Вы уже предложили помощь по этой нужде.</p>
+      <% } else { %>
+        <form action="/need/<%= need.id %>/help" method="post" onsubmit="return confirm('Открыть личный чат с семьёй, чтобы предложить помощь?')">
+          <button type="submit" class="btn btn-primary btn-lg w-100">Хочу помочь</button>
+        </form>
+        <p class="text-muted small mt-2">После нажатия откроется личный чат с семьёй: можно договариваться, задавать вопросы и отправлять фото/документы.</p>
+      <% } %>
+    <% } else if (user && user.role === 'family') { %>
+      <div class="alert alert-light border">
+        <% if (need.userId === user.id) { %>
+          <% if (helpers.length === 0) { %>
+            Пока никто не откликнулся. Постарайтесь подробно описать нужду.
+          <% } else { %>
+            На вашу нужду откликнулись: <% helpers.forEach((h, i) => { %><a href="#" class="text-truncate"><%= h.name %></a><%= i < helpers.length - 1 ? ', ' : '' %><% }); %>.
+            Отвечайте в <a href="/messages">сообщениях</a>.
+          <% } %>
+        <% } else { %>
+          Это чужая нужда. Если нуждаетесь в помощи — <a href="/need/new">подайте свою</a>.
+        <% } %>
+      </div>
+    <% } else { %>
+      <div class="alert alert-light border">
+        <a href="/login">Войдите</a> или <a href="/register">зарегистрируйтесь</a>, чтобы предложить помощь.
+      </div>
+    <% } %>
+  </div>
+</div>

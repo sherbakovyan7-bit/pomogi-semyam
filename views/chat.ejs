@@ -1,0 +1,79 @@
+<%
+const isImage = (mime) => mime && mime.startsWith('image/');
+const fmtSize = (b) => b >= 1048576 ? (b / 1048576).toFixed(1) + ' МБ' : b >= 1024 ? Math.round(b / 1024) + ' КБ' : b + ' Б';
+%>
+<% if (opened) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    Диалог открыт. Договоритесь о деталях помощи — можно отправлять фото и документы.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+<% } %>
+
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+  <div>
+    <a href="/messages" class="text-muted small text-decoration-none">← Все диалоги</a>
+    <h4 class="mb-0 mt-1">Чат с <strong>@<%= other.username %></strong></h4>
+    <span class="text-muted small">По нужде: <a href="/need/<%= need.id %>" class="text-decoration-none">«<%= need.title %>»</a></span>
+  </div>
+  <div class="text-end small text-muted">
+    <% if (other.role === 'family') { %>👨‍👩‍👧‍👦 Детей: <%= other.childrenCount %><% } else { %>🤝 Благотворитель<% } %>
+    <% if (other.about) { %><br><%= other.about %><% } %>
+  </div>
+</div>
+
+<div class="chat-window border rounded mb-3" id="messages">
+  <% if (msgs.length === 0) { %>
+    <div class="text-center text-muted p-4">Сообщений пока нет. Напишите первое сообщение!</div>
+  <% } %>
+  <% msgs.forEach(m => { %>
+    <div class="msg <%= m.senderId === user.id ? 'msg-mine' : 'msg-theirs' %>">
+      <div class="msg-body">
+        <div class="msg-text"><%= m.text || '' %></div>
+        <% if (m.files && m.files.length) { %>
+          <div class="d-flex flex-wrap gap-2 mt-2">
+            <% m.files.forEach(f => { %>
+              <% if (isImage(f.mime)) { %>
+                <a href="<%= f.path %>" target="_blank" class="attachment attachment-image" title="<%= f.name %>">
+                  <img src="<%= f.path %>" alt="<%= f.name %>">
+                </a>
+              <% } else { %>
+                <a href="<%= f.path %>" target="_blank" class="attachment attachment-file border rounded">
+                  📄 <%= f.name %> <span class="text-muted">(<%= fmtSize(f.size) %>)</span>
+                </a>
+              <% } %>
+            <% }); %>
+          </div>
+        <% } %>
+        <div class="msg-meta"><%= formatDate(m.createdAt) %><%= m.senderId === user.id ? ' · Я' : '' %></div>
+      </div>
+    </div>
+  <% }); %>
+</div>
+
+<form action="/chat/<%= conv.id %>/send" method="post" enctype="multipart/form-data" class="card">
+  <div class="card-body">
+    <textarea name="text" class="form-control mb-2" rows="2" placeholder="Введите сообщение…" maxlength="4000"></textarea>
+    <div class="d-flex align-items-center gap-2">
+      <label class="btn btn-outline-secondary mb-0">
+        📎 Прикрепить файлы (до 5, до 15 МБ)
+        <input type="file" name="files" multiple hidden accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt">
+      </label>
+      <span class="text-muted small" id="fileNames"></span>
+      <button type="submit" class="btn btn-primary ms-auto">Отправить</button>
+    </div>
+  </div>
+</form>
+
+<script>
+  const input = document.querySelector('input[name="files"]');
+  const label = document.getElementById('fileNames');
+  input.addEventListener('change', () => {
+    label.textContent = input.files.length
+      ? Array.from(input.files).map(f => f.name).join(', ')
+      : '';
+  });
+  window.addEventListener('load', () => {
+    const box = document.getElementById('messages');
+    if (box) box.scrollTop = box.scrollHeight;
+  });
+</script>

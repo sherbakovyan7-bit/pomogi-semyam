@@ -1,0 +1,19 @@
+{
+  "name": "pomogi-semiam",
+  "version": "0.1.0",
+  "description": "Платформа помощи семьям с детьми до 18 лет: семьи подают нужды, благотворители помогают, личные сообщения с файлами",
+  "main": "server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "multer": "^2.2.0"
+  }
+}

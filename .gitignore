@@ -1,0 +1,8 @@
+node_modules/
+desktop/
+dist/
+*.log
+data.json
+uploads/*
+!uploads/.gitkeep
+*.apk
